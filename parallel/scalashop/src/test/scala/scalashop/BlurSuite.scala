@@ -14,7 +14,7 @@ class BlurSuite extends FunSuite {
 
     for (x <- 0 until 5; y <- 0 until 5)
       src(x, y) = rgba(x, y, x + y, math.abs(x - y))
-
+    println(red(src.apply(1,1)))
     for (x <- 0 until 5; y <- 0 until 5)
       assert(boxBlurKernel(src, x, y, 0) === rgba(x, y, x + y, math.abs(x - y)),
         "boxBlurKernel(_,_,0) should be identity.")
@@ -29,8 +29,18 @@ class BlurSuite extends FunSuite {
     src(0, 3) = 50; src(1, 3) = 11; src(2, 3) = 16
 
     assert(boxBlurKernel(src, 1, 2, 1) === 12,
-      s"(boxBlurKernel(1, 2, 1) should be 12, " +
-        s"but it's ${boxBlurKernel(src, 1, 2, 1)})")
+      s" boxBlurKernel(1, 2, 1) should be 12 ")
+  }
+  test("boxBlurKernel d " +
+    "of a 3x4 image with radius 1") {
+    val src = new Img(3, 4)
+    src(0, 0) = 0; src(1, 0) = 1; src(2, 0) = 2
+    src(0, 1) = 3; src(1, 1) = 4; src(2, 1) = 5
+    src(0, 2) = 6; src(1, 2) = 7; src(2, 2) = 8
+    src(0, 3) = 50; src(1, 3) = 11; src(2, 3) = 16
+
+    assert(boxBlurKernel(src, 0, 0, 1) === 2,
+      s" boxBlurKernel(1, 2, 1) should be 2 ")
   }
 
   test("HorizontalBoxBlur.blur with radius 1 should correctly blur the entire 3x3 image") {
@@ -68,7 +78,7 @@ class BlurSuite extends FunSuite {
     src(0, 0) = 0; src(1, 0) = 1; src(2, 0) = 2; src(3, 0) = 9
     src(0, 1) = 3; src(1, 1) = 4; src(2, 1) = 5; src(3, 1) = 10
     src(0, 2) = 6; src(1, 2) = 7; src(2, 2) = 8; src(3, 2) = 11
-
+    println(scalashop.boxBlurKernel(src,3,1,2))
     VerticalBoxBlur.blur(src, dst, 0, 4, 2)
 
     def check(x: Int, y: Int, expected: Int) =
@@ -79,14 +89,14 @@ class BlurSuite extends FunSuite {
     check(1, 0, 5)
     check(2, 0, 5)
     check(3, 0, 6)
+    check(3, 1, 6)
     check(0, 1, 4)
     check(1, 1, 5)
     check(2, 1, 5)
-    check(3, 1, 6)
-    check(0, 2, 4)
     check(1, 2, 5)
     check(2, 2, 5)
     check(3, 2, 6)
+    check(0, 2, 4)
   }
 
 

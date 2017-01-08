@@ -43,19 +43,21 @@ object VerticalBoxBlur {
    *  bottom.
    */
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit = {
-    // TODO implement this method using the `boxBlurKernel` method
-    ???
+    for ( x <- from until end; y <- 0 until src.height)
+      dst.update(x,y,scalashop.boxBlurKernel(src,x,y,radius))
   }
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.
    *
-   *  Parallelization is done by stripping the source image `src` into
+     *  Parallelization is done by stripping the source image `src` into
    *  `numTasks` separate strips, where each strip is composed of some number of
    *  columns.
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
     // TODO implement using the `task` construct and the `blur` method
-    ???
+    val j = src.width / numTasks
+    val ts= for(i <- 0 to src.width by j if(i!=0)) yield task(blur(src,dst,i-j,i,radius))
+    ts.foreach(_.join)
   }
 
 }
