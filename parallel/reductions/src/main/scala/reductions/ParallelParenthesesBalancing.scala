@@ -11,9 +11,9 @@ object ParallelParenthesesBalancingRunner {
   @volatile var parResult = false
 
   val standardConfig = config(
-    Key.exec.minWarmupRuns -> 5,
-    Key.exec.maxWarmupRuns -> 10,
-    Key.exec.benchRuns -> 10,
+    Key.exec.minWarmupRuns -> 2,
+    Key.exec.maxWarmupRuns -> 4,
+    Key.exec.benchRuns -> 5,
     Key.verbose -> true
   ) withWarmer(new Warmer.Default)
 
@@ -55,25 +55,25 @@ object ParallelParenthesesBalancing {
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean = {
 
-    def traverse(idx: Int, until: Int, oc: Int, cc: Int): Int= {
-      if(idx == until) oc - cc
-      else if(chars(idx) == '(') traverse(idx+1,until,oc+1,cc)
-      else if(chars(idx) == ')') traverse(idx+1,until,oc,cc+1)
-      else traverse(idx+1,until,oc,cc)
+    def traverse(idx: Int, until: Int, oc: Int, c: Boolean): (Int,Boolean)= {
+      if(idx == until) (oc,c)
+      else if(chars(idx) == '(') traverse(idx+1,until,oc+1,c)
+      else if(chars(idx) == ')'&& oc<1) traverse(idx+1,until,oc-1,false)
+      else if(chars(idx) == ')') traverse(idx+1,until,oc-1,c)
+      else traverse(idx+1,until,oc,c)
     }
 
-    def reduce(from: Int, until: Int): Int= {
+    def reduce(from: Int, until: Int): (Int,Boolean)= {
       if(until-from <= threshold)
-        traverse(from,until,0,0)
+        traverse(from,until,0,true)
       else{
         val mid = (from + until) / 2
         val r = parallel(reduce(from,mid),reduce(mid,until))
-        if(r._1 < 0) r._1
-        else r._1 + r._2
+        (r._1._1+r._2._1,r._1._2)
       }
     }
 
-    reduce(0, chars.length) == 0
+    reduce(0, chars.length) == (0,true)
   }
 
   // For those who want more:
