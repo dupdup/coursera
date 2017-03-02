@@ -16,6 +16,11 @@ class LineOfSightSuite extends FunSuite {
     lineOfSight(Array[Float](0f, 1f, 8f, 9f), output)
     assert(output.toList == List(0f, 1f, 4f, 4f))
   }
+  test("parlineOfSight should correctly handle an array of size 4") {
+    val output = new Array[Float](4)
+    parLineOfSight(Array[Float](0f, 1f, 8f, 9f), output,1)
+    assert(output.toList == List(0f, 1f, 4f, 4f))
+  }
 
 
   test("upsweepSequential should correctly handle the chunk 1 until 4 of an array of 4 elements") {
@@ -28,6 +33,12 @@ class LineOfSightSuite extends FunSuite {
     val output = new Array[Float](4)
     downsweepSequential(Array[Float](0f, 1f, 8f, 9f), output, 0f, 1, 4)
     assert(output.toList == List(0f, 1f, 4f, 4f))
+  }
+
+  test("downsweepSequential should correctly handle a 4 element array when the starting angle is 5f") {
+    val output = new Array[Float](4)
+    downsweepSequential(Array[Float](0f, 1f, 8f, 9f), output, 5f, 1, 4)
+    assert(output.toList == List(0f, 5f, 5f, 5f))
   }
 
 }
