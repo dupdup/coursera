@@ -6,14 +6,14 @@ import common._
 object LineOfSightRunner {
   
   val standardConfig = config(
-    Key.exec.minWarmupRuns -> 2,
-    Key.exec.maxWarmupRuns -> 3,
-    Key.exec.benchRuns -> 4,
+    Key.exec.minWarmupRuns -> 8,
+    Key.exec.maxWarmupRuns -> 8,
+    Key.exec.benchRuns -> 50,
     Key.verbose -> true
   ) withWarmer(new Warmer.Default)
 
   def main(args: Array[String]) {
-    val length = 1000
+    val length = 10000000
     val input = (0 until length).map(_ % 100 * 1.0f).toArray
     val output = new Array[Float](length + 1)
     val seqtime = standardConfig measure {
@@ -22,7 +22,7 @@ object LineOfSightRunner {
     println(s"sequential time: $seqtime ms")
 
     val partime = standardConfig measure {
-      LineOfSight.parLineOfSight(input, output, 10)
+      LineOfSight.parLineOfSight(input, output, 1000)
     }
     println(s"parallel time: $partime ms")
     println(s"speedup: ${seqtime / partime}")
@@ -105,7 +105,7 @@ object LineOfSight {
   def downsweep(input: Array[Float], output: Array[Float], startingAngle: Float,
     tree: Tree): Unit
   = tree match {
-    case Leaf(f, u, m) => downsweepSequential(input,output,m,f,u)
+    case Leaf(f, u, m) => downsweepSequential(input,output,startingAngle,f,u)
     case Node(l,r) => parallel(downsweep(input,output,startingAngle,l),downsweep(input,output,l.maxPrevious,r))
   }
 

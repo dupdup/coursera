@@ -21,6 +21,12 @@ class LineOfSightSuite extends FunSuite {
     parLineOfSight(Array[Float](0f, 1f, 8f, 9f), output,1)
     assert(output.toList == List(0f, 1f, 4f, 4f))
   }
+  test("parlineOfSight should correctly handle an array of size 45") {
+    val output = new Array[Float](5)
+//    List(0.0, 12.0, 12.0, 12.0, 12.0) did not equal List(0.0, 7.0, 7.0, 11.0, 12.0)
+    parLineOfSight(Array[Float](0f, 7f, 5f, 33f, 48f), output,2)
+    assert(output.toList == List(0.0, 7.0, 7.0, 11.0, 12.0))
+  }
 
 
   test("upsweepSequential should correctly handle the chunk 1 until 4 of an array of 4 elements") {
