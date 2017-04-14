@@ -64,7 +64,12 @@ class KMeans {
   }
 
   def converged(eta: Double)(oldMeans: GenSeq[Point], newMeans: GenSeq[Point]): Boolean = {
-    !(oldMeans.seq,newMeans.seq).zipped.exists((x:Point,y:Point)=>x.squareDistance(y)>eta)
+    !(0 to oldMeans.length-1).exists((i)=>oldMeans(i).squareDistance(newMeans(i))>eta)
+//     if()
+//       break
+//    }
+//      true
+    //!(oldMeans.seq,newMeans.seq).zipped.exists((x:Point,y:Point)=>x.squareDistance(y)>eta)
   }
 
   @tailrec
